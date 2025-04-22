@@ -407,11 +407,14 @@ class Model(ModelBase):
 
     def exec_model_in_container(self, model_path, cmd_args, args):
         if not args.container:
-            cmd_args[0] = get_cmd_with_wrapper(cmd_args)
+            if cmd_args[0].startswith("ramalama-"):
+                cmd_args[0] = get_cmd_with_wrapper(cmd_args)
 
             return False
 
-        cmd_args[0] = f"/usr/libexec/ramalama/{cmd_args[0]}"
+        if cmd_args[0].startswith("ramalama-"):
+            cmd_args[0] = f"/usr/libexec/ramalama/{cmd_args[0]}"
+
         conman_args = self.setup_container(args)
         if len(conman_args) == 0:
             return False
@@ -549,7 +552,14 @@ class Model(ModelBase):
         if EMOJI and "LLAMA_PROMPT_PREFIX" not in os.environ:
             os.environ["LLAMA_PROMPT_PREFIX"] = "🦙 > "
 
-        exec_args = ["ramalama-run-core", "--jinja", "-c", f"{args.context}", "--temp", f"{args.temp}"] + args.runtime_args
+        exec_args = [
+            "ramalama-run-core",
+            "--jinja",
+            "-c",
+            f"{args.context}",
+            "--temp",
+            f"{args.temp}",
+        ] + args.runtime_args
 
         if args.seed:
             exec_args += ["--seed", args.seed]

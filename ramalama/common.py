@@ -502,13 +502,13 @@ def minor_release():
     vers = ".".join(split[:2])
     if vers == "0":
         vers = "latest"
-    return vers
+    return "0.7.5"
 
 
 def tagged_image(image):
     if len(image.split(":")) > 1:
         return image
-    return f"{image}:{minor_release()}"
+    return f"{image}:0.7.5"
 
 
 def get_cmd_with_wrapper(cmd_args):
